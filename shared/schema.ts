@@ -1,6 +1,36 @@
 import { z } from "zod";
-import { pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, serial, integer, boolean } from "drizzle-orm/pg-core"; // <-- Added serial, integer, boolean
 import { createInsertSchema } from "drizzle-zod";
+
+export const users = pgTable('users', {
+  id: serial('id').primaryKey(),
+  email: text('email').unique().notNull(),
+  passwordHash: text('password_hash').notNull(),
+  name: text('name'),
+  isVerified: boolean('is_verified').default(false).notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+export const paymentSessions = pgTable('payment_sessions', {
+  id: serial('id').primaryKey(),
+
+  // Foreign key linking the payment to a user
+  userId: integer('user_id')
+    .references(() => users.id, { onDelete: 'cascade' })
+    .notNull(),
+  
+  // The unique ID provided by the payment processor (e.g., Stripe)
+  externalSessionId: text('external_session_id').unique().notNull(),
+
+  // The amount paid (stored in cents/lowest denomination)
+  amountPaidCents: integer('amount_paid_cents').notNull(),
+
+  // Currency code (e.g., 'usd')
+  currency: text('currency').notNull(),
+
+  // Timestamp of when the payment was successfully completed
+  paidAt: timestamp('paid_at').defaultNow().notNull(),
+});
 
 export const pendingConversionsTable = pgTable("pending_conversions", {
   sessionId: text("session_id").primaryKey(),
@@ -52,6 +82,7 @@ export interface PricingTier {
 }
 
 export const PRICING_TIERS: PricingTier[] = [
+  // ... (Your pricing tiers array content remains unchanged)
   {
     id: "one-time",
     name: "One-Time Purchase",
