@@ -250,7 +250,7 @@ export default function Converter() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <FileJson className="w-6 h-6 text-primary" />
-            <h1 className="text-xl sm:text-2xl font-semibold text-foreground">JSON Converter</h1>
+            <h1 className="text-xl sm:text-2xl font-semibold text-foreground">Infernal Code: JSON -> SQL|CSV Conversion </h1>
           </div>
           <div className="flex items-center gap-3">
             {isPaid && (
